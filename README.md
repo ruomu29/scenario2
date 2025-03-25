@@ -5,3 +5,4 @@ under root directory, services with files for backend;
 Firebaseconfig modified for persistent login; 
 index added under app for navigation of login and register; 
 _layouts under app modified for using react native paper; 
+an image added inside assets/images for default user profile photo; 
