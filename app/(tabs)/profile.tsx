@@ -1,32 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Alert,
-} from 'react-native';
-import {
-  Avatar,
-  Text,
-  Card,
-  TextInput,
-  IconButton,
-  Chip,
-  RadioButton,
-  Button,
-} from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { Avatar, Text, Card, TextInput, IconButton, Chip, RadioButton, Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
-
-import {
-  getUserProfile,
-  updateUserProfileField,
-  updateUserProfileFields,
-  listenToUserProfile,
-} from '../../services/profileService.js';
+import { getUserProfile, updateUserProfileField, updateUserProfileFields, listenToUserProfile } from '../../services/profileService.js';
 import { auth, storage } from '../../config/firebaseConfig';
 import { useRouter } from 'expo-router';
+
+const CustomButton = (props) => {
+  const [pressed, setPressed] = useState(false);
+  const { mode, style, onPressIn, onPressOut, ...rest } = props;
+  if (mode === 'contained') {
+    return (
+      <Button
+        {...rest}
+        mode={mode}
+        style={style}
+        onPressIn={(e) => {
+          setPressed(true);
+          onPressIn && onPressIn(e);
+        }}
+        onPressOut={(e) => {
+          setPressed(false);
+          onPressOut && onPressOut(e);
+        }}
+        buttonColor={pressed ? 'rgb(224,114,109)' : 'rgb(255,189,194)'}
+      >
+        {props.children}
+      </Button>
+    );
+  } else {
+    return (
+      <Button
+        {...rest}
+        mode={mode}
+        style={[style, { borderColor: pressed ? 'rgb(224,114,109)' : 'rgb(255,189,194)' }]}
+        onPressIn={(e) => {
+          setPressed(true);
+          onPressIn && onPressIn(e);
+        }}
+        onPressOut={(e) => {
+          setPressed(false);
+          onPressOut && onPressOut(e);
+        }}
+        textColor={pressed ? 'rgb(224,114,109)' : 'rgb(255,189,194)'}
+      >
+        {props.children}
+      </Button>
+    );
+  }
+};
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -40,16 +64,7 @@ export default function ProfileScreen() {
   const [customGender, setCustomGender] = useState('');
   const [newInterest, setNewInterest] = useState('');
   const [newSociety, setNewSociety] = useState('');
-
-  const recommendedInterests = [
-    'Reading',
-    'Music',
-    'Sports',
-    'Travel',
-    'Coding',
-    'Cooking',
-  ];
-
+  const recommendedInterests = ['Reading', 'Music', 'Sports', 'Travel', 'Coding', 'Cooking'];
   useEffect(() => {
     const unsubscribe = listenToUserProfile((data) => {
       setUser(data);
@@ -61,27 +76,22 @@ export default function ProfileScreen() {
     });
     return () => unsubscribe();
   }, []);
-
   const handleSaveStudies = async () => {
     await updateUserProfileFields({ degree, university });
     setEditingStudies(false);
   };
-
   const handleSaveBio = async () => {
     await updateUserProfileField('bio', bio);
     setEditingBio(false);
   };
-
   const handleGenderChange = async (value) => {
     setGender(value);
     await updateUserProfileField('gender', value);
   };
-
   const handleCustomGenderChange = async (value) => {
     setCustomGender(value);
     await updateUserProfileField('customGender', value);
   };
-
   const handleAddItem = async (field, value) => {
     if (!value.trim()) return;
     const list = user[field] || [];
@@ -89,26 +99,22 @@ export default function ProfileScreen() {
     const updated = [...list, value];
     await updateUserProfileField(field, updated);
   };
-
   const handleRemoveItem = async (field, value) => {
     const list = user[field] || [];
     const updated = list.filter((item) => item !== value);
     await updateUserProfileField(field, updated);
   };
-
   const handleAvatarPress = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       Alert.alert('Permission denied');
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 0.7,
     });
-
     if (!result.canceled) {
       const image = result.assets[0];
       const blob = await (await fetch(image.uri)).blob();
@@ -119,9 +125,7 @@ export default function ProfileScreen() {
       await updateUserProfileField('avatarUrl', downloadUrl);
     }
   };
-
   if (!user) return null;
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 80 }}>
       <View style={styles.avatarRow}>
@@ -133,15 +137,14 @@ export default function ProfileScreen() {
         <IconButton icon="camera" onPress={handleAvatarPress} />
         <Text style={styles.welcome}>Welcome Back, <Text style={{ fontWeight: 'bold' }}>{user.name}</Text>!</Text>
       </View>
-
       <Card style={styles.card}>
-        <Card.Title title="My Studies" right={() => <IconButton icon="pencil" onPress={() => setEditingStudies(!editingStudies)} />} />
+        <Card.Title title="My Studies" titleStyle={{ fontWeight: 'bold' }} right={() => <IconButton icon="pencil" onPress={() => setEditingStudies(!editingStudies)} />} />
         <Card.Content>
           {editingStudies ? (
             <>
-              <TextInput label="Degree" value={degree} onChangeText={setDegree} mode="outlined" style={styles.input} />
-              <TextInput label="University" value={university} onChangeText={setUniversity} mode="outlined" style={styles.input} />
-              <Button mode="contained" onPress={handleSaveStudies} style={styles.button}>Save</Button>
+              <TextInput label="Degree" value={degree} onChangeText={setDegree} mode="outlined" style={styles.input} outlineColor="rgb(255,189,194)" activeOutlineColor="rgb(224,114,109)" />
+              <TextInput label="University" value={university} onChangeText={setUniversity} mode="outlined" style={styles.input} outlineColor="rgb(255,189,194)" activeOutlineColor="rgb(224,114,109)" />
+              <CustomButton mode="contained" onPress={handleSaveStudies} style={styles.button}>Save</CustomButton>
             </>
           ) : (
             <>
@@ -151,38 +154,35 @@ export default function ProfileScreen() {
           )}
         </Card.Content>
       </Card>
-
       <Card style={styles.card}>
-        <Card.Title title="About Me" right={() => <IconButton icon="pencil" onPress={() => setEditingBio(!editingBio)} />} />
+        <Card.Title title="About Me" titleStyle={{ fontWeight: 'bold' }} right={() => <IconButton icon="pencil" onPress={() => setEditingBio(!editingBio)} />} />
         <Card.Content>
           {editingBio ? (
             <>
-              <TextInput label="Biography" value={bio} onChangeText={setBio} mode="outlined" multiline numberOfLines={4} style={styles.input} />
-              <Button mode="contained" onPress={handleSaveBio} style={styles.button}>Save</Button>
+              <TextInput label="Biography" value={bio} onChangeText={setBio} mode="outlined" multiline numberOfLines={4} style={styles.input} outlineColor="rgb(255,189,194)" activeOutlineColor="rgb(224,114,109)" />
+              <CustomButton mode="contained" onPress={handleSaveBio} style={styles.button}>Save</CustomButton>
             </>
           ) : (
             <Text>{bio || 'No biography yet.'}</Text>
           )}
         </Card.Content>
       </Card>
-
       <Card style={styles.card}>
-        <Card.Title title="Gender" />
+        <Card.Title title="Gender" titleStyle={{ fontWeight: 'bold' }}/>
         <Card.Content>
           <RadioButton.Group onValueChange={handleGenderChange} value={gender}>
-            <RadioButton.Item label="Male" value="Male" />
-            <RadioButton.Item label="Female" value="Female" />
-            <RadioButton.Item label="Prefer not to say" value="Prefer not to say" />
-            <RadioButton.Item label="Not included" value="Not included" />
+            <RadioButton.Item label="Male" value="Male"   color="rgb(224,114,109)"/>
+            <RadioButton.Item label="Female" value="Female"  color="rgb(224,114,109)"/>
+            <RadioButton.Item label="Prefer not to say" value="Prefer not to say" color="rgb(224,114,109)"/>
+            <RadioButton.Item label="Not included" value="Not included"  color="rgb(224,114,109)"/>
           </RadioButton.Group>
           {gender === 'Not included' && (
-            <TextInput label="Custom Gender" value={customGender} onChangeText={handleCustomGenderChange} mode="outlined" style={styles.input} />
+            <TextInput label="Custom Gender" value={customGender} onChangeText={handleCustomGenderChange} mode="outlined" style={styles.input} outlineColor="rgb(255,189,194)" activeOutlineColor="rgb(224,114,109)" />
           )}
         </Card.Content>
       </Card>
-
       <Card style={styles.card}>
-        <Card.Title title="My Interests" />
+        <Card.Title title="My Interests" titleStyle={{ fontWeight: 'bold' }} />
         <Card.Content>
           <TextInput
             placeholder="Add new interest"
@@ -194,8 +194,9 @@ export default function ProfileScreen() {
             }}
             mode="outlined"
             style={styles.input}
+            outlineColor="rgb(255,189,194)"
+            activeOutlineColor="rgb(224,114,109)"
           />
-
           <View style={styles.recommendWrap}>
             {recommendedInterests.map((item) => (
               <Chip key={item} style={styles.recommendChip} onPress={() => handleAddItem('interests', item)}>
@@ -203,23 +204,17 @@ export default function ProfileScreen() {
               </Chip>
             ))}
           </View>
-
           <View style={styles.chipWrap}>
             {(user.interests || []).map((item) => (
-              <Chip
-                key={item}
-                style={styles.chip}
-                onClose={() => handleRemoveItem('interests', item)}
-              >
+              <Chip key={item} style={styles.chip} onClose={() => handleRemoveItem('interests', item)}>
                 {item}
               </Chip>
             ))}
           </View>
         </Card.Content>
       </Card>
-
       <Card style={styles.card}>
-        <Card.Title title="My Societies" />
+        <Card.Title title="My Societies" titleStyle={{ fontWeight: 'bold' }}/>
         <Card.Content>
           <TextInput
             placeholder="Add new society"
@@ -231,25 +226,23 @@ export default function ProfileScreen() {
             }}
             mode="outlined"
             style={styles.input}
+            outlineColor="rgb(255,189,194)"
+            activeOutlineColor="rgb(224,114,109)"
           />
           <View style={styles.chipWrap}>
             {(user.societies || []).map((item) => (
-              <Chip
-                key={item}
-                style={styles.chip}
-                onClose={() => handleRemoveItem('societies', item)}
-              >
+              <Chip key={item} style={styles.chip} onClose={() => handleRemoveItem('societies', item)}>
                 {item}
               </Chip>
             ))}
           </View>
         </Card.Content>
       </Card>
-      <Button
+      <CustomButton
         mode="outlined"
         onPress={async () => {
           try {
-            await auth.signOut(); // Firebase sign out
+            await auth.signOut();
             Alert.alert('Logged Out', 'You have been signed out.');
             router.replace('/register');
           } catch (error) {
@@ -259,16 +252,19 @@ export default function ProfileScreen() {
         }}
         style={styles.logoutButton}
       >
-        Logout
-      </Button>
+        <Text style={{ color: 'rgba(0, 0, 0, 0.76)' }}>Logout</Text>
+      </CustomButton>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  titleBold: {
+    fontWeight: 'bold',
+  },
   container: {
     padding: 16,
-    backgroundColor: 'rgb(255, 237, 237)',
+    backgroundColor: 'rgb(255,237,237)',
   },
   avatarRow: {
     flexDirection: 'row',
@@ -317,7 +313,8 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     marginTop: 16,
+    backgroundColor: 'rgb(247,194,196)',
     borderColor: 'rgb(227,154,150)',
     borderWidth: 1,
-  },  
+  }
 });
