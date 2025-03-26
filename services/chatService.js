@@ -21,7 +21,7 @@ export async function fetchAllChats() {
 }
 // Listen for a message change
 export function subscribeToMessages(chatId, callback, errorCallback) {
-  const messagesRef = collection(db, 'chats', chatId.toString(), 'messages');
+  const messagesRef = collection(db, 'chats', chatId, 'messages');
   const messagesQuery = query(messagesRef, orderBy('created_at', 'asc'));
 
   return onSnapshot(messagesQuery, (snapshot) => {
@@ -37,10 +37,11 @@ export function subscribeToMessages(chatId, callback, errorCallback) {
 }
 
 // sending message
-export async function sendMessage(chatId, newMessage) {
+export async function sendMessage(chatId, newMessage, user) {
   const messagesRef = collection(db, 'chats', chatId.toString(), 'messages');
   await addDoc(messagesRef, {
     value: newMessage.trim(),
     created_at: serverTimestamp(),
+    user_id : user
   });
 }

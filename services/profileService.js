@@ -45,4 +45,27 @@ import {
     const docRef = getUserDocRef();
     await setDoc(docRef, fullData, { merge: true });
   }
-  
+
+  export const getUserById = async (userId) => {
+    try {
+      // Reference to the user document in Firestore
+      const userDocRef = doc(db, 'users', userId);
+      
+      // Get the user document
+      const userDoc = await getDoc(userDocRef);
+      
+      if (userDoc.exists()) {
+        // Return the user data with the ID included
+        return {
+          id: userDoc.id,
+          ...userDoc.data()
+        };
+      } else {
+        console.log(`No user found with ID: ${userId}`);
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error fetching user with ID ${userId}:`, error);
+      throw error;
+    }
+  };

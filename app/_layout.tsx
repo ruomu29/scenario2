@@ -1,4 +1,4 @@
-import 'react-native-reanimated'; 
+
 import { PaperProvider } from 'react-native-paper'; 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
