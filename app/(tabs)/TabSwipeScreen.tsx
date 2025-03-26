@@ -1,110 +1,94 @@
-import { StyleSheet, Animated } from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
+import { StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { getUsers } from '@/components/Users';
 import { shuffleArray } from '@/components/shuffleArray';
-import { useState, useEffect, useRef } from 'react';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import { useState, useEffect } from 'react';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { runOnJS } from 'react-native-reanimated';
 
 export default function SwipeScreen() {
   const [userList, setUserList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userIndex, setUserIndex] = useState(0);
 
-  const translationX = useRef(new Animated.Value(0)).current
-  const translationY = useRef(new Animated.Value(0)).current
+  const translationX = useSharedValue(0);
+  const translationY = useSharedValue(0);
 
   useEffect(() => {
     const getUserList = async () => {
       const userList = await shuffleArray(await getUsers());
       setUserList(userList);
       setLoading(false);
-    }
+    };
     getUserList();
   }, []);
 
-  // Taken from https://blog.logrocket.com/react-native-gesture-handler-tutorial-examples/
-  const pan = Gesture.Pan().onUpdate((event) => {
-      translationX.setValue(event.translationX)
-      translationY.setValue(event.translationY)
-  }).onEnd((event) => {
-      if (event.translationX > 450 || event.translationX < -450) {
-        if (userIndex < userList.length -1) {
-          setUserIndex(userIndex + 1)
+  const pan = Gesture.Pan()
+    .onUpdate((event) => {
+      translationX.value = event.translationX;
+      translationY.value = event.translationY;
+    })
+    .onEnd((event) => {
+      if (event.translationX > 150 || event.translationX < -150) {
+        if (userIndex < userList.length - 1) {
+          runOnJS(setUserIndex)(userIndex + 1);
         } else {
-          setUserIndex(-1)
+          runOnJS(setUserIndex)(-1);
         }
       }
+      translationX.value = 0;
+      translationY.value = 0;
+    });
 
-      translationX.setValue(0);
-      translationY.setValue(0);
-  })
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translationX.value }, { translateY: translationY.value }],
+  }));
 
   const user = userList[userIndex];
 
-  if (loading == true) {
+  if (loading) {
     return (
-      <View style={styles.container}>
+      <GestureHandlerRootView style={styles.container}>
         <Text>Loading...</Text>
-      </View>
+      </GestureHandlerRootView>
     );
   }
 
   if (userList.length === 0) {
     return (
-      <View style={styles.container}>
+      <GestureHandlerRootView style={styles.container}>
         <Text>No more users to show</Text>
-      </View>
+      </GestureHandlerRootView>
     );
   }
 
   if (userIndex > -1) {
     return (
-      <View style={styles.container}>
+      <GestureHandlerRootView style={styles.container}>
         <GestureDetector gesture={pan}>
-        <Animated.View
-            style={[
-              styles.box,
-              {
-                transform: [
-                  { translateX: translationX },
-                  { translateY: translationY },
-                ],
-              },
-            ]}
-          >
-          <Text style ={styles.nameFormat}>Name: {user.name}</Text>
-          <Text style ={styles.ageFormat}>Age: {user.age} </Text>
+          <Animated.View style={[styles.box, animatedStyle]}>
+            <Text style={styles.nameFormat}>Name: {user.name}</Text>
+            <Text style={styles.ageFormat}>Age: {user.age}</Text>
           </Animated.View>
-  
         </GestureDetector>
-      </View>
-    );  
+      </GestureHandlerRootView>
+    );
   } else {
     return (
-      <View style={styles.container}>
+      <GestureHandlerRootView style={styles.container}>
         <Text>No more users to show</Text>
-      </View>
+      </GestureHandlerRootView>
     );
   }
-
 }
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
   },
   box: {
     width: 500,
@@ -113,7 +97,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },  
+  },
   nameFormat: {
     fontSize: 24,
     fontWeight: 'bold',
