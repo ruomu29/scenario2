@@ -121,11 +121,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgb(255,237,237)',
   },
   box: {
-    width: 500,
-    height: 200,
-    backgroundColor: '#ffb5c0',
+    width: 300,
+    height: 600,
+    backgroundColor: 'rgb(247,194,196)',
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -141,3 +142,4 @@ const styles = StyleSheet.create({
     color: '#555',
   },
 });
+
