@@ -11,6 +11,7 @@ export default function SwipeScreen() {
   const [userList, setUserList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userIndex, setUserIndex] = useState(0);
+  const [currentUser, setCurrentUser] = useState();
 
   const translationX = useSharedValue(0);
   const translationY = useSharedValue(0);
@@ -21,6 +22,8 @@ export default function SwipeScreen() {
       setUserList(userList);
       setLoading(false);
     };
+    const curUser = getUserProfile();
+    setCurrentUser(curUser);
     getUserList();
   }, []);
   // Create a new chat in Firebase
@@ -29,10 +32,10 @@ export default function SwipeScreen() {
       // Create a new chat document
       const chatRef = await addDoc(collection(db, 'chats'), {
         participants: [currentUser.uid, matchedUser.id], // Add both user IDs
-        createdAt: serverTimestamp(),
+        createdAt: Timestamp.now(),
         lastMessage: '',
-        lastMessageTime: serverTimestamp(),
-        name: matchedUser.name, // You might want to customize this
+        lastMessageTime: Timestamp.now(),
+        name: matchedUser.name,
       });
       
       console.log('New chat created with ID:', chatRef.id);
