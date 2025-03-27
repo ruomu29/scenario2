@@ -8,7 +8,11 @@ export const getUsers = async () => {
   const userList = querySnapshot.docs.map((doc) => ({
     id: doc.id, 
     name: doc.data().name,
-    age: doc.data().age
+    bio: doc.data().bio,
+    degree: doc.data().degree,
+    interests: doc.data().interests,
+    societies: doc.data().societies,
+    gender: doc.data().gender
   }));
 
   return userList

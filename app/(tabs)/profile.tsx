@@ -138,7 +138,7 @@ export default function ProfileScreen() {
         <Text style={styles.welcome}>Welcome Back, <Text style={{ fontWeight: 'bold' }}>{user.name}</Text>!</Text>
       </View>
       <Card style={styles.card}>
-        <Card.Title title="My Studies" titleStyle={{ fontWeight: 'bold' }} right={() => <IconButton icon="pencil" onPress={() => setEditingStudies(!editingStudies)} />} />
+        <Card.Title title="My Studies" titleStyle={{ fontWeight: 'bold', color: "gray" }} right={() => <IconButton icon="pencil" onPress={() => setEditingStudies(!editingStudies)} />} />
         <Card.Content>
           {editingStudies ? (
             <>
@@ -148,14 +148,14 @@ export default function ProfileScreen() {
             </>
           ) : (
             <>
-              <Text>{degree}</Text>
-              <Text>{university}</Text>
+              <Text style={{ color: "gray" }}>{degree}</Text>
+              <Text style={{ color: "gray" }}>{university}</Text>
             </>
           )}
         </Card.Content>
       </Card>
       <Card style={styles.card}>
-        <Card.Title title="About Me" titleStyle={{ fontWeight: 'bold' }} right={() => <IconButton icon="pencil" onPress={() => setEditingBio(!editingBio)} />} />
+        <Card.Title title="About Me" titleStyle={{ fontWeight: 'bold' , color: "gray"}} right={() => <IconButton icon="pencil" onPress={() => setEditingBio(!editingBio)} />} />
         <Card.Content>
           {editingBio ? (
             <>
@@ -163,26 +163,27 @@ export default function ProfileScreen() {
               <CustomButton mode="contained" onPress={handleSaveBio} style={styles.button}>Save</CustomButton>
             </>
           ) : (
-            <Text>{bio || 'No biography yet.'}</Text>
+            <Text style={{ color: "gray" }}>{bio || 'No biography yet.'}</Text>
           )}
         </Card.Content>
       </Card>
       <Card style={styles.card}>
-        <Card.Title title="Gender" titleStyle={{ fontWeight: 'bold' }}/>
+        <Card.Title title="Gender" titleStyle={{ fontWeight: 'bold', color: "gray" }}/>
         <Card.Content>
-          <RadioButton.Group onValueChange={handleGenderChange} value={gender}>
-            <RadioButton.Item label="Male" value="Male"   color="rgb(224,114,109)"/>
-            <RadioButton.Item label="Female" value="Female"  color="rgb(224,114,109)"/>
-            <RadioButton.Item label="Prefer not to say" value="Prefer not to say" color="rgb(224,114,109)"/>
-            <RadioButton.Item label="Not included" value="Not included"  color="rgb(224,114,109)"/>
-          </RadioButton.Group>
+        <RadioButton.Group onValueChange={handleGenderChange} value={gender}>
+          <RadioButton.Item label="Male" value="Male" color="rgb(224,114,109)" labelStyle={{ color: 'grey' }} />
+          <RadioButton.Item label="Female" value="Female" color="rgb(224,114,109)" labelStyle={{ color: 'grey' }} />
+          <RadioButton.Item label="Prefer not to say" value="Prefer not to say" color="rgb(224,114,109)" labelStyle={{ color: 'grey' }} />
+          <RadioButton.Item label="Not included" value="Not included" color="rgb(224,114,109)" labelStyle={{ color: 'grey' }} />
+        </RadioButton.Group>
+
           {gender === 'Not included' && (
             <TextInput label="Custom Gender" value={customGender} onChangeText={handleCustomGenderChange} mode="outlined" style={styles.input} outlineColor="rgb(255,189,194)" activeOutlineColor="rgb(224,114,109)" />
           )}
         </Card.Content>
       </Card>
       <Card style={styles.card}>
-        <Card.Title title="My Interests" titleStyle={{ fontWeight: 'bold' }} />
+        <Card.Title title="My Interests" titleStyle={{ fontWeight: 'bold', color: "gray" }} />
         <Card.Content>
           <TextInput
             placeholder="Add new interest"
@@ -199,14 +200,14 @@ export default function ProfileScreen() {
           />
           <View style={styles.recommendWrap}>
             {recommendedInterests.map((item) => (
-              <Chip key={item} style={styles.recommendChip} onPress={() => handleAddItem('interests', item)}>
+              <Chip key={item} style={styles.recommendChip} textStyle={{color: "white"}} onPress={() => handleAddItem('interests', item)}>
                 {item}
               </Chip>
             ))}
           </View>
           <View style={styles.chipWrap}>
             {(user.interests || []).map((item) => (
-              <Chip key={item} style={styles.chip} onClose={() => handleRemoveItem('interests', item)}>
+              <Chip key={item} style={styles.chip} textStyle={{color: "white"}} onClose={() => handleRemoveItem('interests', item)}>
                 {item}
               </Chip>
             ))}
@@ -214,7 +215,7 @@ export default function ProfileScreen() {
         </Card.Content>
       </Card>
       <Card style={styles.card}>
-        <Card.Title title="My Societies" titleStyle={{ fontWeight: 'bold' }}/>
+        <Card.Title title="My Societies" titleStyle={{ fontWeight: 'bold', color: "gray" }}/>
         <Card.Content>
           <TextInput
             placeholder="Add new society"
