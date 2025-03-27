@@ -23,6 +23,35 @@ export default function SwipeScreen() {
     };
     getUserList();
   }, []);
+  // Create a new chat in Firebase
+  const createNewChat = async (matchedUser) => {
+    try {
+      // Create a new chat document
+      const chatRef = await addDoc(collection(db, 'chats'), {
+        participants: [currentUser.uid, matchedUser.id], // Add both user IDs
+        createdAt: serverTimestamp(),
+        lastMessage: '',
+        lastMessageTime: serverTimestamp(),
+        name: matchedUser.name, // You might want to customize this
+      });
+      
+      console.log('New chat created with ID:', chatRef.id);
+      // You could also show a notification or navigate to the chat
+      
+    } catch (error) {
+      console.error('Error creating chat:', error);
+    }
+  };
+  
+  const handleRightSwipe = (user) => {
+    console.log('Liked:', user.name);
+    createNewChat(user);
+  };
+  
+  const handleLeftSwipe = (user) => {
+    console.log('Passed:', user.name);
+    // Any left swipe logic here
+  };
 
   const pan = Gesture.Pan()
     .onUpdate((event) => {
