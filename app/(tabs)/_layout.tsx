@@ -8,6 +8,7 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
 const pinkColor = 'rgb(227,154,150)';
 
+
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
@@ -23,6 +24,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: pinkColor,
         headerShown: useClientOnlyValue(false, true),
+        tabBarStyle: { backgroundColor: 'rgb(252, 243, 244)' },
       }}>
 
       <Tabs.Screen
@@ -30,14 +32,16 @@ export default function TabLayout() {
         options={{
           title: 'Swipe',
           tabBarIcon: ({ color }) => <TabBarIcon name="heart" color={pinkColor} />,
+          headerStyle: { backgroundColor: 'rgb(252, 190, 190)' },
         }}
       />
 
       <Tabs.Screen
         name="chat"
         options={{
-          headerShown: false,
+          title: 'Chat List',
           tabBarIcon: ({ color }) => <TabBarIcon name="comment" color={pinkColor} />,
+          headerStyle: { backgroundColor: 'rgb(252, 190, 190)' },
         }}
       />
 
@@ -46,6 +50,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={pinkColor} />,
+          headerStyle: { backgroundColor: 'rgb(252, 190, 190)' },
         }}
       />
     </Tabs>
