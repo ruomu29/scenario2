@@ -77,18 +77,18 @@ export default function ChatMessages() {
   };
 
   const renderMessage = ({ item }: { item: any }) => {
-    // Compare references for determining the current user
-    // const messageUser = await fetchUserData(item.user_id)
     const isCurrentUser = currentUser && item.userData.uid === currentUser.uid;
     const userName = item.userData.name || 'Unknown User';
     const userAvatar = item.userData.avatar;
     const timeDisplay = formatRelativeTime(item.created_at);
-    
+  
     return (
-      <View style={[
-        styles.messageContainer,
-        isCurrentUser ? styles.currentUserMessageContainer : styles.otherUserMessageContainer
-      ]}>
+      <View
+        style={[
+          styles.messageContainer,
+          isCurrentUser ? styles.currentUserMessageContainer : styles.otherUserMessageContainer
+        ]}
+      >
         {!isCurrentUser && (
           <View style={styles.avatarContainer}>
             {userAvatar ? (
@@ -98,37 +98,43 @@ export default function ChatMessages() {
             )}
           </View>
         )}
-        
+  
         <View style={styles.messageContentContainer}>
-          {!isCurrentUser && (
-            <Text style={styles.userName}>{userName}</Text>
-          )}
-          
-          <Card 
-            style={[
-              styles.messageCard,
-              isCurrentUser ? styles.currentUserMessageCard : styles.otherUserMessageCard
-            ]}
-          >
-            <Card.Content>
-              <Text style={styles.messageText}>{item.value}</Text>
-              <Text style={styles.timestamp}>{timeDisplay}</Text>
-            </Card.Content>
-          </Card>
+          {!isCurrentUser && <Text style={styles.userName}>{userName}</Text>}
+
+          <View style={{ position: 'relative', paddingHorizontal: 2 }}>
+            {!isCurrentUser && <View style={styles.bubbleTailLeft} />}
+            {isCurrentUser && <View style={styles.bubbleTailRight} />}
+  
+            <Card
+              style={[
+                styles.messageCard,
+                isCurrentUser ? styles.currentUserMessageCard : styles.otherUserMessageCard
+              ]}
+            >
+              <Card.Content style={{ paddingVertical: 6, paddingHorizontal: 10 }}>
+                <Text style={styles.messageText}>{item.value}</Text>
+                <Text style={styles.timestamp}>{timeDisplay}</Text>
+              </Card.Content>
+            </Card>
+          </View>
         </View>
-        
+  
         {isCurrentUser && (
           <View style={styles.avatarContainer}>
             {currentUser?.avatar ? (
               <Avatar.Image size={32} source={{ uri: currentUser.avatar }} />
             ) : (
-              <Avatar.Text size={32} label={(currentUser?.name?.substring(0, 2) || 'ME').toUpperCase()} />
+              <Avatar.Text
+                size={32}
+                label={(currentUser?.name?.substring(0, 2) || 'ME').toUpperCase()}
+              />
             )}
           </View>
         )}
       </View>
     );
-  };
+  };  
 
   const handleSendMessage = async () => {
     
@@ -267,15 +273,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   messageContainer: {
-    flexDirection: 'row',
     marginVertical: 8,
-    alignItems: 'flex-end',
-  },
+  }, 
   currentUserMessageContainer: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   otherUserMessageContainer: {
     flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   avatarContainer: {
     marginHorizontal: 8,
@@ -290,20 +296,47 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   messageCard: {
-    borderRadius: 16,
+    borderRadius: 6,
     elevation: 1,
     shadowColor: 'rgba(0,0,0,0.1)',
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
   },
+  bubbleTailLeft: {
+    position: 'absolute',
+    left: -4,
+    top: 10,
+    width: 0,
+    height: 0,
+    borderTopWidth: 6,
+    borderTopColor: 'transparent',
+    borderRightWidth: 6,
+    borderRightColor: 'rgb(251,221,219)',
+    borderBottomWidth: 6,
+    borderBottomColor: 'transparent',
+  },
+  
+  bubbleTailRight: {
+    position: 'absolute',
+    right: -4,
+    top: 10,
+    width: 0,
+    height: 0,
+    borderTopWidth: 6,
+    borderTopColor: 'transparent',
+    borderLeftWidth: 6,
+    borderLeftColor: 'rgb(252, 204, 208)',
+    borderBottomWidth: 6,
+    borderBottomColor: 'transparent',
+  },
   currentUserMessageCard: {
     backgroundColor: 'rgb(252, 204, 208)',
-    borderBottomRightRadius: 4, // Creates speech bubble effect
+    borderRadius: 16,
   },
   otherUserMessageCard: {
-    backgroundColor: 'rgb(249, 229, 231)',
-    borderBottomLeftRadius: 4, // Creates speech bubble effect
-  },
+    backgroundColor: 'rgb(251,221,219)',
+    borderRadius: 16,
+  },  
   messageText: {
     fontSize: 16,
     color: 'rgb(51, 51, 51)',
