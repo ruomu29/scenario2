@@ -1,4 +1,5 @@
 import { AllChats } from "@/components/allChats";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 function ChatsPage() {

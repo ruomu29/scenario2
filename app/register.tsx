@@ -1,5 +1,9 @@
 // app/register.tsx
 
+export const options = {
+  headerShown: false,
+};
+
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text, TextInput, Button, useTheme } from 'react-native-paper';
@@ -128,4 +132,16 @@ const styles = StyleSheet.create({
     color: 'rgb(0, 102, 204)',
     fontWeight: 'bold',
   },
+  footer: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
 });
+
+export const unstable_settings = {
+  initialRouteName: 'register',
+};
+
+export const screenOptions = {
+  headerShown: false,
+};

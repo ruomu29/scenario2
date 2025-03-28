@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import React from 'react';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -56,7 +57,8 @@ function RootLayoutNav() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
           <Stack.Screen name="chatMessages" options={{ headerShown: false }} />
-          {/*<Stack.Screen name="register" options={{ title: 'Register' }} />*/}
+          <Stack.Screen name="register" options={{ headerShown: false }} />
+          <Stack.Screen name="login" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
     </PaperProvider>
